@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  app:
+    image: eclipse-temurin:21-jdk
+    container_name: content_analyzer-app
+    working_dir: /app
+    volumes:
+      - .:/app
+      - gradle-cache:/root/.gradle
+    command: ["./gradlew", "clean", "build", "-x", "check", "-x", "test"]
+    depends_on:
+      - postgres
+    networks:
+      - content_analyzer-network
+
   postgres:
     image: postgres:16-alpine
     container_name: content_analyzer-db
@@ -54,3 +67,4 @@ networks:
 
 volumes:
   postgres-data:
+  gradle-cache:
