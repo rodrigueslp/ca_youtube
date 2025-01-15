@@ -3,7 +3,7 @@ version: '3.8'
 services:
   app:
     image: eclipse-temurin:21-jdk
-    container_name: content_analyzer-app
+    container_name: ca_youtube-app
     working_dir: /app
     volumes:
       - .:/app
@@ -12,13 +12,13 @@ services:
     depends_on:
       - postgres
     networks:
-      - content_analyzer-network
+      - ca_youtube-network
 
   postgres:
     image: postgres:16-alpine
-    container_name: content_analyzer-db
+    container_name: ca_youtube-db
     environment:
-      POSTGRES_DB: content_analyzer
+      POSTGRES_DB: ca_youtube
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
@@ -27,7 +27,7 @@ services:
     ports:
       - "5433:5432"
     networks:
-      - content_analyzer-network
+      - ca_youtube-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -37,7 +37,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:23.0.6
-    container_name: content_analyzer-keycloak
+    container_name: ca_youtube-keycloak
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
@@ -54,7 +54,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - content_analyzer-network
+      - ca_youtube-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
       interval: 30s
@@ -62,7 +62,7 @@ services:
       retries: 3
 
 networks:
-  content_analyzer-network:
+  ca_youtube-network:
     driver: bridge
 
 volumes:
