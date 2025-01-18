@@ -15,10 +15,22 @@ class CorsConfig {
         val config = CorsConfiguration()
 
         // Permite requisições de qualquer origem em desenvolvimento
-        config.allowedOrigins = listOf("http://localhost:3000", "http://localhost:3001")
+        config.allowedOrigins = listOf(
+            "http://localhost:3000",
+            "http://localhost:3001",
+            "https://ca_youtube.railway.internal",
+            "https://ca-youtube.railway.internal")
         config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         config.allowedHeaders = listOf("*")
         config.allowCredentials = true
+        config.allowedHeaders = listOf(
+            "Authorization",
+            "Content-Type",
+            "Accept",
+            "Origin",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers"
+        )
 
         source.registerCorsConfiguration("/**", config)
         return CorsFilter(source)
