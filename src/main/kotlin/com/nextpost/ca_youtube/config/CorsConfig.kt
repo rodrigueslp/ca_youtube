@@ -18,8 +18,7 @@ class CorsConfig {
         config.allowedOrigins = listOf(
             "http://localhost:3000",
             "http://localhost:3001",
-            "https://ca_youtube.railway.internal",
-            "https://ca-youtube.railway.internal")
+            "https://cayoutube-development.up.railway.app")
         config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         config.allowedHeaders = listOf("*")
         config.allowCredentials = true
