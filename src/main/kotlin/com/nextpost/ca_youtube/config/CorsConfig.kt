@@ -18,7 +18,7 @@ class CorsConfig {
         config.allowedOrigins = listOf(
             "http://localhost:3000",
             "http://localhost:3001",
-            "https://cayoutube-development.up.railway.app")
+            "https://next-auth-test-development.up.railway.app")
         config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         config.allowedHeaders = listOf("*")
         config.allowCredentials = true
