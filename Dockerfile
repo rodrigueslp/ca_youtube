@@ -11,8 +11,8 @@ RUN chmod +x gradlew
 # Buildar o projeto
 RUN ./gradlew clean build -x check -x test
 
-# Expor a porta que sua aplicação usa (ajuste conforme necessário)
+# Expor a porta que sua aplicação usa
 EXPOSE 8080
 
-# Comando para executar a aplicação
-CMD ["java", "-jar", "build/libs/*.jar"]
+# Comando para encontrar e executar o JAR
+CMD java -jar build/libs/$(ls build/libs/ | grep '\.jar$' | head -n 1)
