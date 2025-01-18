@@ -45,11 +45,22 @@ class MetricsService(
                 .execute()
 
             videoDetails.items.forEach { videoItem ->
+                val existingVideo = videoRepository.findByVideoId(videoItem.id)
+
                 val publishedAt = Instant.parse(videoItem.snippet.publishedAt.toStringRfc3339())
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime()
 
-                val video = Video(
+                val video = existingVideo?.copy(
+                    title = videoItem.snippet.title,
+                    description = videoItem.snippet.description,
+                    publishedAt = publishedAt,
+                    duration = Duration.parse(videoItem.contentDetails.duration),
+                    viewCount = videoItem.statistics.viewCount.toLong(),
+                    categoryId = videoItem.snippet.categoryId,
+                    likeCount = videoItem.statistics.likeCount?.toLong() ?: 0,
+                    commentCount = videoItem.statistics.commentCount?.toLong() ?: 0
+                ) ?: Video(
                     channel = channel,
                     videoId = videoItem.id,
                     title = videoItem.snippet.title,
@@ -57,8 +68,12 @@ class MetricsService(
                     publishedAt = publishedAt,
                     duration = Duration.parse(videoItem.contentDetails.duration),
                     viewCount = videoItem.statistics.viewCount.toLong(),
-                    categoryId = videoItem.snippet.categoryId
+                    categoryId = videoItem.snippet.categoryId,
+                    likeCount = videoItem.statistics.likeCount?.toLong() ?: 0,
+                    commentCount = videoItem.statistics.commentCount?.toLong() ?: 0,
+                    shareCount = 0
                 )
+
                 videoRepository.save(video)
             }
         } catch (e: Exception) {

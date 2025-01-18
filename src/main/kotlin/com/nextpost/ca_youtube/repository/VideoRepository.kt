@@ -9,9 +9,13 @@ import java.time.LocalDateTime
 
 @Repository
 interface VideoRepository : JpaRepository<Video, Long> {
+
     fun findByChannel(channel: Channel): List<Video>
+
     fun findByChannelAndPublishedAtAfter(channel: Channel, date: LocalDateTime): List<Video>
 
     @Query("SELECT v FROM Video v WHERE v.channel = :channel ORDER BY v.publishedAt DESC")
     fun findRecentVideos(channel: Channel): List<Video>
+
+    fun findByVideoId(videoId: String): Video?
 }

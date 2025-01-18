@@ -15,7 +15,7 @@ class CorsConfig {
         val config = CorsConfiguration()
 
         // Permite requisições de qualquer origem em desenvolvimento
-        config.allowedOrigins = listOf("http://localhost:3000")
+        config.allowedOrigins = listOf("http://localhost:3000", "http://localhost:3001")
         config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         config.allowedHeaders = listOf("*")
         config.allowCredentials = true

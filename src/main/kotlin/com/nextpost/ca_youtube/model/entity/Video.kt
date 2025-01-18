@@ -36,6 +36,15 @@ data class Video(
     @Column(name = "category_id")
     val categoryId: String,
 
+    @Column(name = "like_count")
+    val likeCount: Long,
+
+    @Column(name = "share_count")
+    val shareCount: Long,
+
+    @Column(name = "comment_count")
+    val commentCount: Long,
+
     @Column(name = "created_at")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 

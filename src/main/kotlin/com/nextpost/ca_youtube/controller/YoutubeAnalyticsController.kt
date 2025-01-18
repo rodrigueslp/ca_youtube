@@ -3,21 +3,46 @@ package com.nextpost.ca_youtube.controller
 import com.nextpost.ca_youtube.model.dto.ChannelDTO
 import com.nextpost.ca_youtube.model.dto.ChannelStatsDTO
 import com.nextpost.ca_youtube.model.dto.VideoDTO
+import com.nextpost.ca_youtube.service.UserService
 import com.nextpost.ca_youtube.service.YouTubeService
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/youtube")
 class YoutubeAnalyticsController(
-    private val youTubeService: YouTubeService
+    private val youTubeService: YouTubeService,
+    private val userService: UserService
 ) {
 
-
     @PostMapping("/channels")
-    fun addChannelToTrack(@RequestParam channelIdentifier: String): ResponseEntity<ChannelDTO> {
-        val channel = youTubeService.addChannelToTrack(channelIdentifier)
+    fun addChannelToTrack(
+        @RequestParam channelIdentifier: String,
+        @AuthenticationPrincipal jwt: Jwt
+    ): ResponseEntity<ChannelDTO> {
+        // Obtém ou cria o usuário baseado no token
+        val user = userService.getOrCreateUser(
+            email = jwt.claims["email"] as String,
+            name = jwt.claims["name"] as String,
+            picture = jwt.claims["picture"] as String?
+        )
+
+        val channel = youTubeService.addChannelToTrackForUser(channelIdentifier, user.id!!)
         return ResponseEntity.ok(channel)
+    }
+
+    @GetMapping("/channels")
+    fun getUserChannels(@AuthenticationPrincipal jwt: Jwt): ResponseEntity<List<ChannelDTO>> {
+        val user = userService.getOrCreateUser(
+            email = jwt.claims["email"] as String,
+            name = jwt.claims["name"] as String,
+            picture = jwt.claims["picture"] as String?
+        )
+
+        val channels = youTubeService.getChannelsForUser(user.id!!)
+        return ResponseEntity.ok(channels)
     }
 
     @GetMapping("/channels/{channelId}/videos")
@@ -36,12 +61,6 @@ class YoutubeAnalyticsController(
     fun getChannelStats(@PathVariable channelId: String): ResponseEntity<List<ChannelStatsDTO>> {
         val stats = youTubeService.getChannelStats(channelId)
         return ResponseEntity.ok(stats)
-    }
-
-    @GetMapping("/channels")
-    fun getAllChannels(): ResponseEntity<List<ChannelDTO>> {
-        val channels = youTubeService.getAllChannels()
-        return ResponseEntity.ok(channels)
     }
 
     @PostMapping("/channels/update-all")

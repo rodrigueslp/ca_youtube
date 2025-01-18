@@ -9,6 +9,7 @@ import com.nextpost.ca_youtube.model.entity.Channel
 import com.nextpost.ca_youtube.model.entity.ChannelStats
 import com.nextpost.ca_youtube.repository.ChannelRepository
 import com.nextpost.ca_youtube.repository.ChannelStatsRepository
+import com.nextpost.ca_youtube.repository.UserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -25,6 +26,7 @@ class YouTubeService(
     private val youtube: YouTube,
     private val channelRepository: ChannelRepository,
     private val channelStatsRepository: ChannelStatsRepository,
+    private val userRepository: UserRepository,
     @Autowired private val apiKey: String
 ) {
     private val logger = LoggerFactory.getLogger(YouTubeService::class.java)
@@ -149,6 +151,62 @@ class YouTubeService(
         } catch (e: Exception) {
             logger.error("Error while tracking channel {}: ", channelId, e)
             throw e
+        }
+    }
+
+    @Transactional
+    fun addChannelToTrackForUser(channelIdentifier: String, userId: Long): ChannelDTO {
+        val user = userRepository.findById(userId)
+            .orElseThrow { IllegalArgumentException("User not found") }
+
+        // Tenta encontrar o canal existente primeiro
+        val channelId = if (channelIdentifier.startsWith("UC")) {
+            channelIdentifier
+        } else {
+            resolveChannelIdFromHandle(channelIdentifier)
+                ?: throw IllegalArgumentException("Invalid YouTube handle or channel not found: $channelIdentifier")
+        }
+
+        // Verifica se o canal já existe no sistema
+        val existingChannel = channelRepository.findByChannelId(channelId)
+
+        val channel = if (existingChannel != null) {
+            // Se o canal já existe, apenas adiciona ao usuário
+            existingChannel
+        } else {
+            // Se não existe, cria um novo canal
+            val newChannel = addChannelById(channelId)
+            channelRepository.findByChannelId(newChannel.channelId)
+                ?: throw IllegalStateException("Channel not found after creation")
+        }
+
+        // Adiciona o canal à lista do usuário
+        user.channels.add(channel)
+        userRepository.save(user)
+
+        return ChannelDTO(
+            channelId = channel.channelId,
+            title = channel.title,
+            description = channel.description,
+            subscriberCount = channel.subscriberCount,
+            videoCount = channel.videoCount,
+            viewCount = channel.viewCount
+        )
+    }
+
+    fun getChannelsForUser(userId: Long): List<ChannelDTO> {
+        val user = userRepository.findById(userId)
+            .orElseThrow { IllegalArgumentException("User not found") }
+
+        return user.channels.map { channel ->
+            ChannelDTO(
+                channelId = channel.channelId,
+                title = channel.title,
+                description = channel.description,
+                subscriberCount = channel.subscriberCount,
+                videoCount = channel.videoCount,
+                viewCount = channel.viewCount
+            )
         }
     }
 

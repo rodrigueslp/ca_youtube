@@ -17,8 +17,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8180/realms/video-shorts-generator
-          jwk-set-uri: http://localhost:8180/realms/video-shorts-generator/protocol/openid-connect/certs
+          issuer-uri: https://accounts.google.com
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
 
 logging:
   level:
