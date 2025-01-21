@@ -32,4 +32,7 @@ server:
 
 youtube:
   application-name: Content Analyzer
-
+  api-key: AIzaSyCiDTN5Y3PO5XdVOkELQwX4HIcwQyhDB4M
+  analytics:
+    client-id: 697477926678-ph2osiscru7pihqis9jqmnirbrfner8f.apps.googleusercontent.com
+    client-secret: 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
