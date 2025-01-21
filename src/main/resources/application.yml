@@ -32,4 +32,7 @@ server:
 youtube:
   application-name: Content Analyzer
   api-key: apikey
-  
+  analytics:
+    client-id: client-id
+    client-secret: client-secret
+    
