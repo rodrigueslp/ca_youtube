@@ -8,7 +8,7 @@ import kotlin.math.pow
 
 @Service
 class AdvancedComparisonService(
-    private val youTubeService: YouTubeService,
+    private val youTubeService: YoutubeService,
     private val metricsService: MetricsService,
     private val comparisonService: ComparisonService
 ) {

@@ -5,7 +5,7 @@ import com.nextpost.ca_youtube.model.dto.DetailedChannelStatsDTO
 import com.nextpost.ca_youtube.model.dto.VideoDTO
 import com.nextpost.ca_youtube.model.entity.ChannelStats
 import com.nextpost.ca_youtube.service.MetricsService
-import com.nextpost.ca_youtube.service.YouTubeService
+import com.nextpost.ca_youtube.service.YoutubeService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import com.nextpost.ca_youtube.util.toDTO
@@ -14,7 +14,7 @@ import com.nextpost.ca_youtube.util.toDTO
 @RequestMapping("/api/metrics")
 class MetricsController(
     private val metricsService: MetricsService,
-    private val youTubeService: YouTubeService
+    private val youTubeService: YoutubeService
 ) {
 
     @PostMapping("/channels/{channelId}/analyze")

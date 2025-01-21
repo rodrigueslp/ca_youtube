@@ -1,7 +1,6 @@
 package com.nextpost.ca_youtube.service
 
 import com.google.api.services.youtube.YouTube
-import com.nextpost.ca_youtube.util.toDTO
 import com.nextpost.ca_youtube.model.dto.VideoDTO
 import com.nextpost.ca_youtube.model.entity.Channel
 import com.nextpost.ca_youtube.model.entity.ChannelMetrics
@@ -14,7 +13,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.*
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 @Service

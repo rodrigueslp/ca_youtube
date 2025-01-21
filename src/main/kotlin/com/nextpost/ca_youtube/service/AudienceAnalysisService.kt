@@ -14,7 +14,7 @@ import kotlin.math.abs
 class AudienceAnalysisService(
     private val youtube: YouTube,
     private val videoRepository: VideoRepository,
-    private val youTubeService: YouTubeService,
+    private val youTubeService: YoutubeService,
     private val contentAnalysisService: ContentAnalysisService
 ) {
     /**

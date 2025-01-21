@@ -4,7 +4,7 @@ import com.nextpost.ca_youtube.model.dto.ChannelDTO
 import com.nextpost.ca_youtube.model.dto.ChannelStatsDTO
 import com.nextpost.ca_youtube.model.dto.VideoDTO
 import com.nextpost.ca_youtube.service.UserService
-import com.nextpost.ca_youtube.service.YouTubeService
+import com.nextpost.ca_youtube.service.YoutubeService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/youtube")
 class YoutubeAnalyticsController(
-    private val youTubeService: YouTubeService,
+    private val youTubeService: YoutubeService,
     private val userService: UserService
 ) {
 

@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 @Service
 class ContentAnalysisService(
     private val videoRepository: VideoRepository,
-    private val youTubeService: YouTubeService
+    private val youTubeService: YoutubeService
 ) {
     /**
      * Analisa padrões de retenção dos vídeos de um canal

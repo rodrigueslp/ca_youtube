@@ -1,5 +1,4 @@
 import com.nextpost.ca_youtube.repository.ChannelRepository
-import com.nextpost.ca_youtube.service.YouTubeService
 import com.nextpost.ca_youtube.service.batch.BatchProcessingService
 import jakarta.annotation.PreDestroy
 import kotlinx.coroutines.*

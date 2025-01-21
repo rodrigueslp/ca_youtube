@@ -1,6 +1,8 @@
 package com.nextpost.ca_youtube.config
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
+import com.google.api.client.http.HttpTransport
+import com.google.api.client.json.JsonFactory
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.youtube.YouTube
 import org.slf4j.LoggerFactory
@@ -37,5 +39,15 @@ class YouTubeConfig {
     }
 
     @Bean
+    fun httpTransport(): HttpTransport = GoogleNetHttpTransport.newTrustedTransport()
+
+    @Bean
+    fun jsonFactory(): JsonFactory = JacksonFactory.getDefaultInstance()
+
+    @Bean
     fun apiKey() = apiKey
+
+    fun getApplicationName(): String {
+        return this.applicationName
+    }
 }

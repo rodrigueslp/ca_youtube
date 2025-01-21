@@ -1,6 +1,5 @@
 package com.nextpost.ca_youtube.controller
 
-import com.nextpost.ca_youtube.model.dto.*
 import com.nextpost.ca_youtube.service.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/audience")
 class AudienceAnalysisController(
     private val audienceAnalysisService: AudienceAnalysisService,
-    private val youTubeService: YouTubeService
+    private val youTubeService: YoutubeService
 ) {
     @PostMapping("/overlap")
     fun analyzeAudienceOverlap(

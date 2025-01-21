@@ -3,7 +3,7 @@ package com.nextpost.ca_youtube.controller
 import com.nextpost.ca_youtube.service.ContentAnalysisService
 import com.nextpost.ca_youtube.service.ContentPatternMetrics
 import com.nextpost.ca_youtube.service.RetentionMetrics
-import com.nextpost.ca_youtube.service.YouTubeService
+import com.nextpost.ca_youtube.service.YoutubeService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/content-analysis")
 class ContentAnalysisController(
     private val contentAnalysisService: ContentAnalysisService,
-    private val youTubeService: YouTubeService
+    private val youTubeService: YoutubeService
 ) {
     @GetMapping("/channels/{channelId}/retention")
     fun analyzeRetention(

@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit
 
 @Service
 class ComparisonService(
-    private val youTubeService: YouTubeService,
+    private val youTubeService: YoutubeService,
     private val metricsService: MetricsService
 ) {
     fun compareChannels(channelIds: List<String>, period: String = "30d"): ChannelComparisonDTO {

@@ -10,30 +10,25 @@ import com.nextpost.ca_youtube.model.entity.ChannelStats
 import com.nextpost.ca_youtube.repository.ChannelRepository
 import com.nextpost.ca_youtube.repository.ChannelStatsRepository
 import com.nextpost.ca_youtube.repository.UserRepository
-import com.nextpost.ca_youtube.service.batch.BatchProcessingResult
 import com.nextpost.ca_youtube.service.batch.BatchProcessingService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.Duration
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @Service
-class YouTubeService(
+class YoutubeService(
     private val youtube: YouTube,
     private val channelRepository: ChannelRepository,
     private val channelStatsRepository: ChannelStatsRepository,
     private val userRepository: UserRepository,
     private val metricsService: MetricsService,
-    private val batchProcessingService: BatchProcessingService,
     @Autowired private val apiKey: String
 )  {
-    private val logger = LoggerFactory.getLogger(YouTubeService::class.java)
+    private val logger = LoggerFactory.getLogger(YoutubeService::class.java)
 
     fun getChannel(channelId: String): Channel? {
         return channelRepository.findByChannelId(channelId)
@@ -239,43 +234,6 @@ class YouTubeService(
 
     fun getRecentVideos(channelId: String): List<VideoDTO> {
         val channel = getChannel(channelId) ?: throw IllegalArgumentException("Channel not found")
-
-//        val searchResponse = youtube.search()
-//            .list(listOf("id", "snippet"))
-//            .setKey(apiKey)
-//            .setChannelId(channelId)
-//            .setOrder("date")
-//            .setType(listOf("video"))
-//            .setMaxResults(3L)
-//            .execute()
-//
-//        return searchResponse.items.map { item ->
-//            val videoResponse = youtube.videos()
-//                .list(listOf("snippet", "statistics", "contentDetails"))
-//                .setKey(apiKey)
-//                .setId(listOf(item.id.videoId))
-//                .execute()
-//
-//            val video = videoResponse.items.first()
-//
-//            // Converter a data corretamente
-//            val publishedAt = Instant.parse(video.snippet.publishedAt.toStringRfc3339())
-//                .atZone(ZoneId.systemDefault())
-//                .toLocalDateTime()
-//
-//            VideoDTO(
-//                videoId = video.id,
-//                title = video.snippet.title,
-//                description = video.snippet.description,
-//                publishedAt = publishedAt,
-//                duration = Duration.parse(video.contentDetails.duration),
-//                viewCount = video.statistics.viewCount.toLong(),
-//                categoryId = video.snippet.categoryId,
-//                thumbnailUrl = video.snippet.thumbnails.default.url  // ou medium/high para diferentes tamanhos
-//            )
-
-        // Primeiro atualiza os vídeos no banco
-//        metricsService.updateChannelVideos(channel)
 
         // Retorna os vídeos do banco de dados
         return metricsService.getRecentVideos(channel, 3)
