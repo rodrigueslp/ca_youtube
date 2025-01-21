@@ -31,6 +31,7 @@ data class ChannelMetricsDTO(
     // Categorias
     val topCategory: String, // Nome da categoria ao invés do ID
     val topCategoryPercentage: Double,
+    val uploadPatternByHour: Map<Int, Int> = emptyMap(),
     // Data da coleta
     val collectedAt: LocalDateTime
 )

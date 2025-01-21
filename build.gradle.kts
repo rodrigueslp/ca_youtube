@@ -36,7 +36,13 @@ dependencies {
 
 	// Kotlin
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("com.fasterxml.jackson.core:jackson-databind")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+	// Coroutines
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j")
 
 	// Database
 	runtimeOnly("org.postgresql:postgresql")
@@ -48,8 +54,6 @@ dependencies {
 	implementation("com.google.apis:google-api-services-youtube:v3-rev20231011-2.0.0")
 
 	// Keycloack
-	implementation("org.keycloak:keycloak-spring-boot-starter:23.0.6")
-	implementation("org.keycloak:keycloak-admin-client:23.0.6")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
 	// Test dependencies

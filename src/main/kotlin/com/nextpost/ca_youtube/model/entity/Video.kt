@@ -36,6 +36,9 @@ data class Video(
     @Column(name = "category_id")
     val categoryId: String,
 
+    @Column(name = "thumbnail")
+    val thumbnail: String,
+
     @Column(name = "like_count")
     val likeCount: Long,
 

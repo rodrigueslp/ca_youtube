@@ -1,8 +1,10 @@
 package com.nextpost.ca_youtube.util
 
 import com.nextpost.ca_youtube.model.dto.ChannelMetricsDTO
+import com.nextpost.ca_youtube.model.dto.ChannelStatsDTO
 import com.nextpost.ca_youtube.model.dto.VideoDTO
 import com.nextpost.ca_youtube.model.entity.ChannelMetrics
+import com.nextpost.ca_youtube.model.entity.ChannelStats
 import com.nextpost.ca_youtube.model.entity.Video
 import java.time.Duration
 
@@ -20,9 +22,18 @@ fun ChannelMetrics.toDTO(): ChannelMetricsDTO {
         mostCommonUploadDay = getDayName(this.mostCommonUploadDay),
         topCategory = getCategoryName(this.topCategoryId),
         topCategoryPercentage = this.topCategoryPercentage,
+        uploadPatternByHour = this.uploadPatternByHour,
         collectedAt = this.collectedAt
     )
 }
+
+fun ChannelStats.toDTO() = ChannelStatsDTO(
+    channelId = channel.channelId,
+    subscriberCount = subscriberCount,
+    videoCount = videoCount,
+    viewCount = viewCount,
+    collectedAt = collectedAt
+)
 
 fun Video.toDTO(): VideoDTO {
     return VideoDTO(

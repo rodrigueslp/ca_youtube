@@ -1,5 +1,6 @@
 package com.nextpost.ca_youtube.model.entity
 
+import com.nextpost.ca_youtube.util.IntMapConverter
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -36,6 +37,10 @@ data class ChannelMetrics(
 
     @Column(name = "avg_video_duration")
     val averageVideoDuration: Long, // em segundos
+
+    @Column(name = "upload_pattern_by_hour", columnDefinition = "text")
+    @Convert(converter = IntMapConverter::class)
+    val uploadPatternByHour: Map<Int, Int> = emptyMap(),
 
     // Horários mais comuns de postagem
     @Column(name = "most_common_upload_hour")

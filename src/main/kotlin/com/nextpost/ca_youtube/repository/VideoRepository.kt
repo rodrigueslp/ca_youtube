@@ -18,4 +18,6 @@ interface VideoRepository : JpaRepository<Video, Long> {
     fun findRecentVideos(channel: Channel): List<Video>
 
     fun findByVideoId(videoId: String): Video?
+
+    fun findByChannelOrderByPublishedAtDesc(channel: Channel): List<Video>
 }

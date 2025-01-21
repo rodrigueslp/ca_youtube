@@ -12,6 +12,8 @@ interface ChannelMetricsRepository : JpaRepository<ChannelMetrics, Long> {
 
     fun findByChannelOrderByCollectedAtDesc(channel: Channel): List<ChannelMetrics>
 
+    fun findFirstByChannelOrderByCollectedAtDesc(channel: Channel): ChannelMetrics?
+
     @Query("SELECT cm FROM ChannelMetrics cm WHERE cm.channel = :channel AND cm.collectedAt >= :startDate")
     fun findMetricsInPeriod(channel: Channel, startDate: LocalDateTime): List<ChannelMetrics>
 

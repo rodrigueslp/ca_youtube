@@ -3,6 +3,7 @@ package com.nextpost.ca_youtube.controller
 import com.nextpost.ca_youtube.model.dto.ChannelMetricsDTO
 import com.nextpost.ca_youtube.model.dto.DetailedChannelStatsDTO
 import com.nextpost.ca_youtube.model.dto.VideoDTO
+import com.nextpost.ca_youtube.model.entity.ChannelStats
 import com.nextpost.ca_youtube.service.MetricsService
 import com.nextpost.ca_youtube.service.YouTubeService
 import org.springframework.http.ResponseEntity
@@ -38,13 +39,40 @@ class MetricsController(
         )
     }
 
+    @GetMapping("/channels/{channelId}/stats")
+    fun getChannelStats(@PathVariable channelId: String): ResponseEntity<List<ChannelStats>> {  // Mudando para List
+        val channel = youTubeService.getChannel(channelId)
+            ?: throw IllegalArgumentException("Channel not found")
+
+        val stats = metricsService.getChannelStats(channel)
+        return ResponseEntity.ok(stats)
+    }
+
+    @PostMapping("/channels/{channelId}/stats")
+    suspend fun updateChannelStats(@PathVariable channelId: String): ResponseEntity<ChannelStats> {
+        val channel = youTubeService.getChannel(channelId)
+            ?: throw IllegalArgumentException("Channel not found")
+
+        val stats = metricsService.updateChannelStats(channel)
+        return ResponseEntity.ok(stats)
+    }
+
+    @PostMapping("/channels/{channelId}/videos/update")
+    fun updateChannelVideos(@PathVariable channelId: String): ResponseEntity<String> {
+        val channel = youTubeService.getChannel(channelId)
+            ?: throw IllegalArgumentException("Channel not found")
+
+        metricsService.updateChannelVideos(channel)
+        return ResponseEntity.ok("Videos updated successfully")
+    }
+
     @GetMapping("/channels/{channelId}/metrics")
     fun getChannelMetrics(@PathVariable channelId: String): ResponseEntity<ChannelMetricsDTO> {
         val channel = youTubeService.getChannel(channelId)
             ?: throw IllegalArgumentException("Channel not found")
 
-        val metrics = metricsService.calculateChannelMetrics(channel)
-        return ResponseEntity.ok(metrics.toDTO())
+        val metric = metricsService.getChannelMetrics(channel)
+        return ResponseEntity.ok(metric.toDTO())
     }
 
     @GetMapping("/channels/{channelId}/videos")

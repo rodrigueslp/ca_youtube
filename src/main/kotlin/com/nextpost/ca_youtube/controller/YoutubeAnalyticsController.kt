@@ -51,26 +51,10 @@ class YoutubeAnalyticsController(
         return ResponseEntity.ok(videos)
     }
 
-    @PostMapping("/channels/{channelId}/stats")
-    fun updateChannelStats(@PathVariable channelId: String): ResponseEntity<ChannelStatsDTO> {
-        val stats = youTubeService.updateChannelStats(channelId)
-        return ResponseEntity.ok(stats)
-    }
-
     @GetMapping("/channels/{channelId}/stats")
     fun getChannelStats(@PathVariable channelId: String): ResponseEntity<List<ChannelStatsDTO>> {
         val stats = youTubeService.getChannelStats(channelId)
         return ResponseEntity.ok(stats)
-    }
-
-    @PostMapping("/channels/update-all")
-    fun updateAllChannels(): ResponseEntity<String> {
-        return try {
-            youTubeService.updateAllChannels() // Chama o método de atualização
-            ResponseEntity.ok("All channels updated successfully")
-        } catch (e: Exception) {
-            ResponseEntity.status(500).body("Error updating channels: ${e.message}")
-        }
     }
 
     @DeleteMapping("/channels/{channelId}")

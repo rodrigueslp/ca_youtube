@@ -10,6 +10,8 @@ import com.nextpost.ca_youtube.model.entity.ChannelStats
 import com.nextpost.ca_youtube.repository.ChannelRepository
 import com.nextpost.ca_youtube.repository.ChannelStatsRepository
 import com.nextpost.ca_youtube.repository.UserRepository
+import com.nextpost.ca_youtube.service.batch.BatchProcessingResult
+import com.nextpost.ca_youtube.service.batch.BatchProcessingService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -27,8 +29,10 @@ class YouTubeService(
     private val channelRepository: ChannelRepository,
     private val channelStatsRepository: ChannelStatsRepository,
     private val userRepository: UserRepository,
+    private val metricsService: MetricsService,
+    private val batchProcessingService: BatchProcessingService,
     @Autowired private val apiKey: String
-) {
+)  {
     private val logger = LoggerFactory.getLogger(YouTubeService::class.java)
 
     fun getChannel(channelId: String): Channel? {
@@ -184,6 +188,12 @@ class YouTubeService(
         user.channels.add(channel)
         userRepository.save(user)
 
+        // Atualizar os vídeos
+        metricsService.updateChannelVideos(channel)
+
+        // Calcular e salvar métricas iniciais
+        metricsService.calculateChannelMetrics(channel)
+
         return ChannelDTO(
             channelId = channel.channelId,
             title = channel.title,
@@ -210,64 +220,6 @@ class YouTubeService(
         }
     }
 
-    @Transactional
-    fun updateChannelStats(channelId: String): ChannelStatsDTO {
-        val channel = getChannel(channelId)
-            ?: throw IllegalArgumentException("Channel not tracked")
-
-        try {
-            val channelResponse = youtube.channels()
-                .list(listOf("statistics"))
-                .setKey(apiKey)
-                .setId(listOf(channelId))
-                .execute()
-
-            if (channelResponse.items.isNullOrEmpty()) {
-                throw IllegalArgumentException("Channel not found on YouTube")
-            }
-
-            val statistics = channelResponse.items.first().statistics
-
-            val newStats = ChannelStats(
-                channel = channel,
-                subscriberCount = statistics.subscriberCount.toLong(),
-                videoCount = statistics.videoCount.toLong(),
-                viewCount = statistics.viewCount.toLong()
-            )
-
-            channelStatsRepository.save(newStats)
-
-            // Update channel with latest stats
-            channel.subscriberCount = statistics.subscriberCount.toLong()
-            channel.videoCount = statistics.videoCount.toLong()
-            channel.viewCount = statistics.viewCount.toLong()
-            channel.updatedAt = LocalDateTime.now()
-            channelRepository.save(channel)
-
-            // Calculate growth rate
-            val previousStats = channelStatsRepository
-                .findByChannelOrderByCollectedAtDesc(channel)
-                .getOrNull(1)
-
-            val growthRate = if (previousStats != null) {
-                ((newStats.subscriberCount - previousStats.subscriberCount).toDouble() /
-                        previousStats.subscriberCount) * 100
-            } else null
-
-            return ChannelStatsDTO(
-                channelId = channel.channelId,
-                subscriberCount = newStats.subscriberCount,
-                videoCount = newStats.videoCount,
-                viewCount = newStats.viewCount,
-                growthRate = growthRate,
-                collectedAt = newStats.collectedAt
-            )
-        } catch (e: Exception) {
-            logger.error("Error updating stats for channel {}: ", channelId, e)
-            throw e
-        }
-    }
-
     fun getChannelStats(channelId: String): List<ChannelStatsDTO> {
         val channel = getChannel(channelId)
             ?: throw IllegalArgumentException("Channel not tracked")
@@ -288,41 +240,46 @@ class YouTubeService(
     fun getRecentVideos(channelId: String): List<VideoDTO> {
         val channel = getChannel(channelId) ?: throw IllegalArgumentException("Channel not found")
 
-        val searchResponse = youtube.search()
-            .list(listOf("id", "snippet"))
-            .setKey(apiKey)
-            .setChannelId(channelId)
-            .setOrder("date")
-            .setType(listOf("video"))
-            .setMaxResults(3L)
-            .execute()
+//        val searchResponse = youtube.search()
+//            .list(listOf("id", "snippet"))
+//            .setKey(apiKey)
+//            .setChannelId(channelId)
+//            .setOrder("date")
+//            .setType(listOf("video"))
+//            .setMaxResults(3L)
+//            .execute()
+//
+//        return searchResponse.items.map { item ->
+//            val videoResponse = youtube.videos()
+//                .list(listOf("snippet", "statistics", "contentDetails"))
+//                .setKey(apiKey)
+//                .setId(listOf(item.id.videoId))
+//                .execute()
+//
+//            val video = videoResponse.items.first()
+//
+//            // Converter a data corretamente
+//            val publishedAt = Instant.parse(video.snippet.publishedAt.toStringRfc3339())
+//                .atZone(ZoneId.systemDefault())
+//                .toLocalDateTime()
+//
+//            VideoDTO(
+//                videoId = video.id,
+//                title = video.snippet.title,
+//                description = video.snippet.description,
+//                publishedAt = publishedAt,
+//                duration = Duration.parse(video.contentDetails.duration),
+//                viewCount = video.statistics.viewCount.toLong(),
+//                categoryId = video.snippet.categoryId,
+//                thumbnailUrl = video.snippet.thumbnails.default.url  // ou medium/high para diferentes tamanhos
+//            )
 
-        return searchResponse.items.map { item ->
-            val videoResponse = youtube.videos()
-                .list(listOf("snippet", "statistics", "contentDetails"))
-                .setKey(apiKey)
-                .setId(listOf(item.id.videoId))
-                .execute()
+        // Primeiro atualiza os vídeos no banco
+//        metricsService.updateChannelVideos(channel)
 
-            val video = videoResponse.items.first()
+        // Retorna os vídeos do banco de dados
+        return metricsService.getRecentVideos(channel, 3)
 
-            // Converter a data corretamente
-            val publishedAt = Instant.parse(video.snippet.publishedAt.toStringRfc3339())
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime()
-
-            VideoDTO(
-                videoId = video.id,
-                title = video.snippet.title,
-                description = video.snippet.description,
-                publishedAt = publishedAt,
-                duration = Duration.parse(video.contentDetails.duration),
-                viewCount = video.statistics.viewCount.toLong(),
-                categoryId = video.snippet.categoryId,
-                thumbnailUrl = video.snippet.thumbnails.default.url  // ou medium/high para diferentes tamanhos
-
-            )
-        }
     }
 
     private fun calculateTimeAgo(publishedAt: String): String {
@@ -355,21 +312,6 @@ class YouTubeService(
         // Lógica simplificada: se engajamento > 5%, consideramos tendência positiva
         val engagement = calculateEngagement(statistics).toDouble()
         return if (engagement > 5.0) "up" else "down"
-    }
-
-    @Transactional
-    fun updateAllChannels() {
-        val channels = channelRepository.findAll() // Busca todos os canais cadastrados
-
-        logger.info("Found ${channels.size} channels to update")
-        channels.forEach { channel ->
-            try {
-                updateChannelStats(channel.channelId) // Atualiza as estatísticas de cada canal
-                logger.info("Successfully updated stats for channel ID: ${channel.channelId}")
-            } catch (e: Exception) {
-                logger.error("Failed to update stats for channel ID: ${channel.channelId}", e)
-            }
-        }
     }
 
 }
