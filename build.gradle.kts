@@ -46,7 +46,6 @@ dependencies {
 
 	// Youtube
 	implementation("com.google.apis:google-api-services-youtube:v3-rev20210915-1.32.1")
-	implementation("com.google.apis:google-api-services-youtubeAnalytics:v2-rev272-1.25.0")
 	implementation("com.google.oauth-client:google-oauth-client-jetty:1.32.1")
 
 	// Database

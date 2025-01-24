@@ -1,7 +1,7 @@
 package com.nextpost.ca_youtube.service
 
-import com.nextpost.ca_youtube.controller.YouTubeTokenRepository
-import com.nextpost.ca_youtube.model.entity.YouTubeToken
+import com.nextpost.ca_youtube.repository.YoutubeTokenRepository
+import com.nextpost.ca_youtube.model.entity.YoutubeAcessToken
 import com.nextpost.ca_youtube.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 @Service
 class YoutubeTokenService(
-    private val youTubeTokenRepository: YouTubeTokenRepository,
+    private val youtubeTokenRepository: YoutubeTokenRepository,
     private val userChannelRepository: UserRepository
 ) {
     @Transactional
@@ -18,10 +18,10 @@ class YoutubeTokenService(
         accessToken: String,
         refreshToken: String?,
         expiresIn: Long
-    ): YouTubeToken {
+    ): YoutubeAcessToken {
         val expiresAt = LocalDateTime.now().plusSeconds(expiresIn)
 
-        val existingToken = youTubeTokenRepository.findByUserId(userId)
+        val existingToken = youtubeTokenRepository.findByUserId(userId)
 
         return if (existingToken.isPresent) {
             existingToken.get().apply {
@@ -29,19 +29,19 @@ class YoutubeTokenService(
                 this.refreshToken = refreshToken ?: this.refreshToken
                 this.expiresAt = expiresAt
                 this.updatedAt = LocalDateTime.now()
-            }.also { youTubeTokenRepository.save(it) }
+            }.also { youtubeTokenRepository.save(it) }
         } else {
-            YouTubeToken(
+            YoutubeAcessToken(
                 userId = userId,
                 accessToken = accessToken,
                 refreshToken = refreshToken,
                 expiresAt = expiresAt
-            ).also { youTubeTokenRepository.save(it) }
+            ).also { youtubeTokenRepository.save(it) }
         }
     }
 
-    fun getValidToken(userId: Long): YouTubeToken {
-        val token = youTubeTokenRepository.findByUserId(userId)
+    fun getValidToken(userId: Long): YoutubeAcessToken {
+        val token = youtubeTokenRepository.findByUserId(userId)
             .orElseThrow { IllegalArgumentException("No YouTube token found for user") }
 
         if (token.expiresAt.isBefore(LocalDateTime.now())) {

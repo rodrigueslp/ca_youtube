@@ -27,7 +27,7 @@ class SecurityConfig {
             .csrf { it.disable() }
             .cors {}
             .authorizeHttpRequests { auth ->
-                auth.requestMatchers("/api/admin/**")
+                auth.requestMatchers("/api/youtube/private/**", "/api/admin/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated()
