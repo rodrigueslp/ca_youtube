@@ -122,7 +122,14 @@ class YoutubeAnalyticsRestServiceImpl(
                 subscribersLost = (row[6] as Number).toInt(),
                 likes = row[7] as Long,
                 comments = row[8] as Long,
-                date = row[0] as String
+                date = row[0] as String,
+                viewsGrowth = 0.0, // Valores padrão para campos não disponíveis na API
+                retentionRate = 0.0,
+                ctr = 0.0,
+                averageWatchTime = 0.0,
+                engagementRate = 0.0,
+                shareCount = 0,
+                topPerformingVideos = emptyList()
             )
         }
     }
@@ -159,8 +166,8 @@ class YoutubeAnalyticsRestServiceImpl(
             if (rows.isEmpty()) null
             else rows.map { row ->
                 DemographicData(
-                    ageGroup = row[0] as String,
-                    gender = row[1] as String,
+                    category = row[0] as String,
+                    type = row[1] as String,
                     percentage = (row[2] as Number).toDouble()
                 )
             }

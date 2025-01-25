@@ -11,12 +11,25 @@ data class ChannelAnalytics(
     val subscribersLost: Int,
     val likes: Long,
     val comments: Long,
-    val date: String
+    val date: String,
+    val viewsGrowth: Double,
+    val retentionRate: Double,
+    val ctr: Double,
+    val averageWatchTime: Double,
+    val engagementRate: Double,
+    val shareCount: Long,
+    val topPerformingVideos: List<VideoPerformance>
+)
+
+data class VideoPerformance(
+    val videoId: String,
+    val views: Long,
+    val retentionRate: Double
 )
 
 data class DemographicData(
-    val ageGroup: String,
-    val gender: String,
+    val category: String, // age range, region, or device
+    val type: String,    // GENDER, REGION, DEVICE
     val percentage: Double
 )
 

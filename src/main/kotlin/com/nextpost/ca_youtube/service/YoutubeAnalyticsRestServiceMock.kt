@@ -1,9 +1,6 @@
 package com.nextpost.ca_youtube.service
 
-import com.nextpost.ca_youtube.model.dto.ChannelAnalytics
-import com.nextpost.ca_youtube.model.dto.ChannelDetails
-import com.nextpost.ca_youtube.model.dto.DemographicData
-import com.nextpost.ca_youtube.model.dto.TrafficSource
+import com.nextpost.ca_youtube.model.dto.*
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -16,13 +13,23 @@ class YoutubeAnalyticsRestServiceMock : YoutubeAnalyticsRestService {
         return ChannelAnalytics(
             views = 15000,
             estimatedMinutesWatched = 45000.0,
-            averageViewDuration = 180.0,
+            averageViewDuration = 180.0, // em segundos
             averageViewPercentage = 65.5,
             subscribersGained = 500,
             subscribersLost = 50,
             likes = 2500,
             comments = 800,
-            date = LocalDateTime.now().toString()
+            date = LocalDateTime.now().toString(),
+            viewsGrowth = 12.5, // crescimento percentual
+            retentionRate = 75.2, // taxa de retenção
+            ctr = 4.8, // Click-through rate
+            averageWatchTime = 240.0, // tempo médio de visualização
+            engagementRate = 8.5, // taxa de engajamento
+            shareCount = 350,
+            topPerformingVideos = listOf(
+                VideoPerformance("video1", 5000, 85.0),
+                VideoPerformance("video2", 4200, 78.5)
+            )
         )
     }
 
